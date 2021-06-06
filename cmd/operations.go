@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"gitcat.ca/endigma/jasmine/util"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 )
@@ -12,6 +13,7 @@ var (
 		Aliases: []string{"e"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Enable(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -23,6 +25,7 @@ var (
 		Aliases: []string{"d"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Disable(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -33,6 +36,7 @@ var (
 		Short: "Up named services",
 		Args:  cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Up(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -44,6 +48,7 @@ var (
 		Aliases: []string{"dn"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Down(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -54,6 +59,7 @@ var (
 		Short: "Start named services",
 		Args:  cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Start(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -64,6 +70,7 @@ var (
 		Short: "Stop named services",
 		Args:  cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Stop(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -75,6 +82,7 @@ var (
 		Aliases: []string{"rs"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Restart(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -86,6 +94,7 @@ var (
 		Aliases: []string{"o"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Once(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -97,6 +106,7 @@ var (
 		Aliases: []string{"o"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Reload(args); err != nil {
 				log.Fatal().Msg(err.Error())
 			}
@@ -108,6 +118,7 @@ var (
 		Aliases: []string{"p"},
 		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			if err := initSystem.Pass(args...); err != nil {
 				log.Fatal().Msg(err.Error())
 			}

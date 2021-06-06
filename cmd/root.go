@@ -12,7 +12,6 @@ import (
 )
 
 var initSystem inits.Init
-var Build string
 
 // cmd_root represents the base command when called without any subcommands
 var cmd_root = &cobra.Command{
@@ -29,6 +28,9 @@ func Execute() {
 	default:
 		log.Fatal().Msg("Unsupported Init System!")
 	}
+
+	cmd_root.PersistentFlags().Bool("suppress", false, "Suppress warnings when UID is not 0")
+	viper.GetViper().BindPFlag("suppress_permissions_warning", cmd_root.PersistentFlags().Lookup("suppress"))
 
 	cobra.CheckErr(cmd_root.Execute())
 }

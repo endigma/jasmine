@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"gitcat.ca/endigma/jasmine/inits"
+	"gitcat.ca/endigma/jasmine/util"
 	"github.com/fatih/color"
 	"github.com/hako/durafmt"
 	"github.com/juju/ansiterm"
@@ -20,6 +21,7 @@ var (
 		Aliases: []string{"ls", "ll", "show"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			var list []inits.Service
 
 			list, err := initSystem.List(args)
@@ -89,6 +91,7 @@ var (
 		Aliases: []string{"la"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
 			var list map[string]bool
 
 			list, err := initSystem.ListAvailable()

@@ -9,15 +9,21 @@ import (
 
 var (
 	cmd_version = &cobra.Command{
-		Use:   "version",
-		Short: "print version and debug information",
+		Use:     "version",
+		Short:   "print version and debug information",
+		Aliases: []string{"about", "version"},
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Print(
 				color.New(color.FgHiBlack).Sprint("["),
 				color.New(color.FgMagenta).Sprint("Jasmine v0.0.1"),
 				color.New(color.FgHiBlack).Sprint("]"),
 				"\n",
-				"source: https://gitcat.ca/endigma/jasmine\n")
+				color.New(color.FgHiBlack).Sprint("author: "),
+				"endigma <endigma@mailcat.ca>\n",
+				color.New(color.FgHiBlack).Sprint("licence: "),
+				"AGPLv3\n",
+				color.New(color.FgHiBlack).Sprint("source: "),
+				"https://gitcat.ca/endigma/jasmine\n")
 		},
 	}
 )

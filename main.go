@@ -25,6 +25,7 @@ func main() {
 	viper.SetDefault("runit.svdir", "/etc/sv")
 	viper.SetDefault("runit.runsvdir", "/var/service")
 	viper.SetDefault("runit.timeout", 5)
+
 	viper.AutomaticEnv()
 
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})

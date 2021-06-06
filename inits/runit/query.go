@@ -24,7 +24,7 @@ func (r *runit) List(services []string) ([]inits.Service, error) {
 	}
 
 	for _, f := range list {
-		sv, err := r.scanService(f)
+		sv, err := r.serviceScan(f)
 		if err != nil {
 			return []inits.Service{}, err
 		}

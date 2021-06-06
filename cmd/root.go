@@ -29,7 +29,7 @@ func Execute() {
 		log.Fatal().Msg("Unsupported Init System!")
 	}
 
-	cmd_root.PersistentFlags().Bool("suppress", false, "Suppress warnings when UID is not 0")
+	cmd_root.PersistentFlags().BoolP("suppress", "s", false, "Suppress warnings when UID is not 0")
 	viper.GetViper().BindPFlag("suppress_permissions_warning", cmd_root.PersistentFlags().Lookup("suppress"))
 
 	cobra.CheckErr(cmd_root.Execute())

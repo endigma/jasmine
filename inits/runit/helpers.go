@@ -11,7 +11,7 @@ import (
 	"github.com/shirou/gopsutil/v3/process"
 )
 
-func (r *runit) scanService(name string) (inits.Service, error) {
+func (r *runit) serviceScan(name string) (inits.Service, error) {
 	statusf, err := util.ReadFileContent(r.runsvdir + "/" + name + "/supervise/stat")
 	if err != nil {
 		return inits.Service{}, err

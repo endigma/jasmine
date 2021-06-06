@@ -11,7 +11,7 @@ var (
 	cmd_version = &cobra.Command{
 		Use:     "version",
 		Short:   "print version and debug information",
-		Aliases: []string{"about", "version"},
+		Aliases: []string{"about", "version", "v"},
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Print(
 				color.New(color.FgHiBlack).Sprint("["),

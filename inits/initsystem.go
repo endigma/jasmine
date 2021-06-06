@@ -1,0 +1,77 @@
+package inits
+
+import (
+	"fmt"
+	"time"
+)
+
+type Init interface {
+	// Enable provides a method to enable a service by name
+	Enable(services []string) error
+
+	// Disable provides a method to disable a service by name
+	Disable(services []string) error
+
+	// Enable provides a method to up a service by name
+	Up(services []string) error
+
+	// Disable provides a method to down a service by name
+	Down(services []string) error
+
+	// Start provides a method to start a service by name
+	Start(services []string) error
+
+	// Stop provides a method to stop a service by name
+	Stop(services []string) error
+
+	// Restart provides a method to restart a service by name
+	Restart(services []string) error
+
+	// Reload provides a method to reload a service by name
+	Reload(services []string) error
+
+	// Once provides a method to run a service once by name
+	Once(services []string) error
+
+	// Pass allows sending commands directly to an init system's official control system
+	Pass(cmd ...string) error
+
+	// List provides a method to list enabled services, optionally filtered by names
+	List([]string) ([]Service, error)
+
+	// List provides a method to disable a service by name
+	ListAvailable() (map[string]bool, error)
+
+	// Status provides a method to view the status of a single service by name
+	Status(services []string) ([]Service, error)
+}
+
+type Service struct {
+	Name    string
+	State   string
+	Enabled bool
+	PID     int64
+	Command string
+	Uptime  time.Duration
+}
+
+var (
+	ErrServiceNotFound = func(sv string) error {
+		return fmt.Errorf("service %s not found", sv)
+	}
+	ErrServiceMalformed = func(sv string) error {
+		return fmt.Errorf("service %s is malformed", sv)
+	}
+	ErrServiceAlreadyEnabled = func(sv string) error {
+		return fmt.Errorf("service %s is already enabled", sv)
+	}
+	ErrServiceAlreadyDisabled = func(sv string) error {
+		return fmt.Errorf("service %s is already disabled", sv)
+	}
+	ErrServiceAlreadyUp = func(sv string) error {
+		return fmt.Errorf("service %s is already up", sv)
+	}
+	ErrServiceAlreadyDown = func(sv string) error {
+		return fmt.Errorf("service %s is already down", sv)
+	}
+)

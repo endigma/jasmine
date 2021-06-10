@@ -15,7 +15,7 @@ var (
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Print(
 				color.New(color.FgHiBlack).Sprint("["),
-				color.New(color.FgMagenta).Sprint("Jasmine v0.1.0"),
+				color.New(color.FgMagenta).Sprint("Jasmine v0.1.2"),
 				color.New(color.FgHiBlack).Sprint("]"),
 				"\n",
 				color.New(color.FgHiBlack).Sprint("author: "),

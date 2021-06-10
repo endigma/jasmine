@@ -6,6 +6,7 @@ import (
 
 	"gitcat.ca/endigma/jasmine/inits"
 	"gitcat.ca/endigma/jasmine/inits/runit"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -29,8 +30,15 @@ func Execute() {
 		log.Fatal().Msg("Unsupported Init System!")
 	}
 
+	cmd_root.PersistentFlags().Bool("debug", false, "Show debug information")
 	cmd_root.PersistentFlags().BoolP("suppress", "s", false, "Suppress warnings when UID is not 0")
+	viper.GetViper().BindPFlag("show_debug_info", cmd_root.PersistentFlags().Lookup("debug"))
 	viper.GetViper().BindPFlag("suppress_permissions_warning", cmd_root.PersistentFlags().Lookup("suppress"))
+
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
+	if viper.GetBool("debug") {
+		zerolog.SetGlobalLevel(zerolog.DebugLevel)
+	}
 
 	cobra.CheckErr(cmd_root.Execute())
 }

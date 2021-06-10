@@ -10,8 +10,9 @@ import (
 )
 
 func main() {
-	//
+	// Config Paths
 	viper.AddConfigPath("$HOME/.config/jasmine")
+	viper.AddConfigPath("/etc/jasmine")
 	viper.AddConfigPath("./")
 	viper.SetConfigName("config")
 

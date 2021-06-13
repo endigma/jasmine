@@ -22,8 +22,8 @@ var initSystems = map[string]func() inits.Init{
 // cmd_root represents the base command when called without any subcommands
 var cmd_root = &cobra.Command{
 	Use:   os.Args[0],
-	Short: "a better user interface for runit",
-	Long:  fmt.Sprintf("%[1]s:\n  %[1]s is a cli app that interfaces with runit\n", os.Args[0]),
+	Short: "a better user interface for init systems and service supervisors",
+	Long:  fmt.Sprintf("%[1]s:\n  %[1]s Jasmine is a frontend for init systems like runit, openrc, s6 and systemd.\n", os.Args[0]),
 }
 
 // Execute starts jasmine

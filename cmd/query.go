@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	"gitcat.ca/endigma/jasmine/inits"
@@ -31,54 +32,54 @@ var (
 
 			w := ansiterm.NewTabWriter(os.Stdout, 1, 1, 1, ' ', 0)
 			color.New(color.Bold).Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%s\n", "SERVICE", "STATE", "ENABLED", "PID", "COMMAND", "TIME")
-			for _, f := range list {
+			for _, sv := range list {
 				fmt.Fprintf(w, "%s\t%s\t%v\t%s\t%.17s\t%s\n",
-					f.Name,
-					func(f inits.Service) string {
-						switch f.State {
+					sv.Name,
+					func(sv inits.Service) string {
+						switch sv.State {
 						case "up":
-							return color.New(color.FgGreen).Sprint(f.State)
+							return color.New(color.FgGreen).Sprint(sv.State)
 						case "down":
-							return color.New(color.FgRed).Sprint(f.State)
+							return color.New(color.FgRed).Sprint(sv.State)
 						}
 						return ""
-					}(f),
-					func(f inits.Service) string {
-						switch f.State {
-						case "up":
-							return color.New(color.FgGreen).Sprint(f.Enabled)
-						case "down":
-							return color.New(color.FgRed).Sprint(f.Enabled)
+					}(sv),
+					func(sv inits.Service) string {
+						switch sv.Enabled {
+						case true:
+							return color.New(color.FgGreen).Sprint(sv.Enabled)
+						case false:
+							return color.New(color.FgRed).Sprint(sv.Enabled)
 						}
 						return ""
-					}(f),
-					func(f inits.Service) string {
-						switch f.State {
+					}(sv),
+					func(sv inits.Service) string {
+						switch sv.State {
 						case "up":
-							return color.New(color.FgHiMagenta).Sprint(f.PID)
-						case "down":
-							return color.New(color.FgHiBlack).Sprint("---")
-						}
-						return ""
-					}(f),
-					func(f inits.Service) string {
-						switch f.State {
-						case "up":
-							return f.Command
+							return color.New(color.FgHiMagenta).Sprint(sv.PID)
 						case "down":
 							return color.New(color.FgHiBlack).Sprint("---")
 						}
 						return ""
-					}(f),
-					func(f inits.Service) string {
+					}(sv),
+					func(sv inits.Service) string {
+						switch sv.State {
+						case "up":
+							return sv.Command[0]
+						case "down":
+							return color.New(color.FgHiBlack).Sprint("---")
+						}
+						return ""
+					}(sv),
+					func(sv inits.Service) string {
 						switch true {
-						case f.Uptime < 5*time.Minute:
-							return color.New(color.FgRed).Sprint(durafmt.Parse(f.Uptime).LimitFirstN(1))
-						case f.Uptime < 30*time.Minute:
-							return color.New(color.FgYellow).Sprint(durafmt.Parse(f.Uptime).LimitFirstN(1))
+						case sv.Uptime < 5*time.Minute:
+							return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
+						case sv.Uptime < 30*time.Minute:
+							return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
 						}
-						return color.New(color.FgHiBlack).Sprint(durafmt.Parse(f.Uptime).LimitFirstN(1))
-					}(f),
+						return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
+					}(sv),
 				)
 			}
 
@@ -109,8 +110,51 @@ var (
 			}
 		},
 	}
+	cmd_query_status = &cobra.Command{
+		Use:     "status <service>",
+		Short:   "Show detailed information about a service",
+		Aliases: []string{"stat"},
+		Args:    cobra.MinimumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			util.SudoWarn()
+
+			sv, err := initSystem.Status(args[0])
+			if err != nil {
+				log.Fatal().Msg(err.Error())
+			}
+
+			fmt.Printf("name: %s\n  uptime: %s\n  status: %s\n  command: %s\n",
+				sv.Name,
+				func(sv inits.Service) string {
+					switch true {
+					case sv.Uptime < 5*time.Minute:
+						return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+					case sv.Uptime < 30*time.Minute:
+						return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+					}
+					return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+				}(sv),
+				func(sv inits.Service) string {
+					switch sv.State {
+					case "up":
+						return color.New(color.FgGreen).Sprint(sv.State)
+					case "down":
+						return color.New(color.FgRed).Sprint(sv.State)
+					}
+					return ""
+				}(sv),
+				func(sv inits.Service) string {
+					return strings.Join(sv.Command, " ")
+				}(sv),
+			)
+		},
+	}
 )
 
 func init() {
-	cmd_root.AddCommand(cmd_query_list, cmd_query_list_available)
+	cmd_root.AddCommand(
+		cmd_query_list,
+		cmd_query_list_available,
+		cmd_query_status,
+	)
 }

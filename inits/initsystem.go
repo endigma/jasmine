@@ -7,31 +7,31 @@ import (
 
 type Init interface {
 	// Enable provides a method to enable a service by name
-	Enable(services []string) error
+	Add(name string) error
 
 	// Disable provides a method to disable a service by name
-	Disable(services []string) error
+	Remove(name string) error
 
 	// Enable provides a method to up a service by name
-	Up(services []string) error
+	Enable(name string) error
 
 	// Disable provides a method to down a service by name
-	Down(services []string) error
+	Disable(name string) error
 
 	// Start provides a method to start a service by name
-	Start(services []string) error
+	Start(name string) error
 
 	// Stop provides a method to stop a service by name
-	Stop(services []string) error
+	Stop(name string) error
 
 	// Restart provides a method to restart a service by name
-	Restart(services []string) error
+	Restart(name string) error
 
 	// Reload provides a method to reload a service by name
-	Reload(services []string) error
+	Reload(name string) error
 
 	// Once provides a method to run a service once by name
-	Once(services []string) error
+	Once(name string) error
 
 	// Pass allows sending commands directly to an init system's official control system
 	Pass(cmd ...string) error
@@ -43,7 +43,7 @@ type Init interface {
 	ListAvailable() (map[string]bool, error)
 
 	// Status provides a method to view the status of a single service by name
-	Status(services []string) ([]Service, error)
+	Status(service string) (Service, error)
 }
 
 type Service struct {
@@ -51,7 +51,7 @@ type Service struct {
 	State   string
 	Enabled bool
 	PID     int64
-	Command string
+	Command []string
 	Uptime  time.Duration
 }
 

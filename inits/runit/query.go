@@ -48,6 +48,6 @@ func (r *runit) ListAvailable() (map[string]bool, error) {
 	return list, nil
 }
 
-func (r *runit) Status(services []string) ([]inits.Service, error) {
-	return []inits.Service{}, nil
+func (r *runit) Status(service string) (inits.Service, error) {
+	return r.serviceScan(service)
 }

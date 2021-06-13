@@ -8,100 +8,84 @@ import (
 	"gitcat.ca/endigma/jasmine/util"
 )
 
-func (r *runit) Enable(services []string) error {
-	if err := r.servicesExist(services); err != nil {
+func (r *runit) Add(name string) error {
+	if err := r.serviceExists(name); err != nil {
 		return err
 	}
 
-	for _, sv := range services {
-		if !r.serviceEnabled(sv) {
-			if err := os.Symlink(filepath.Join(r.svdir, sv), filepath.Join(r.runsvdir, sv)); err != nil {
-				return err
-			}
+	if !r.serviceEnabled(name) {
+		if err := os.Symlink(filepath.Join(r.svdir, name), filepath.Join(r.runsvdir, name)); err != nil {
+			return err
 		}
 	}
 
 	return nil
 }
 
-func (r *runit) Disable(services []string) error {
-	if err := r.servicesExist(services); err != nil {
+func (r *runit) Remove(name string) error {
+	if err := r.serviceExists(name); err != nil {
 		return err
 	}
 
-	for _, sv := range services {
-		if r.serviceEnabled(sv) {
-			if err := os.Remove(filepath.Join(r.runsvdir, sv)); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (r *runit) Up(services []string) error {
-	for _, sv := range services {
-		if util.FileExists(filepath.Join(r.runsvdir, sv, "down")) {
-			if err := os.Remove(filepath.Join(r.runsvdir, sv, "down")); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (r *runit) Down(services []string) error {
-	for _, sv := range services {
-		if !util.FileExists(filepath.Join(r.runsvdir, sv, "down")) {
-			if _, err := os.Create(filepath.Join(r.runsvdir, sv, "down")); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (r *runit) Start(services []string) error {
-	for _, sv := range services {
-		if err := r.serviceControl(sv, controlUp); err != nil {
+	if r.serviceEnabled(name) {
+		if err := os.Remove(filepath.Join(r.runsvdir, name)); err != nil {
 			return err
 		}
 	}
+
 	return nil
 }
 
-func (r *runit) Stop(services []string) error {
-	for _, sv := range services {
-		if err := r.serviceControl(sv, controlDown); err != nil {
+func (r *runit) Enable(name string) error {
+	if util.FileExists(filepath.Join(r.runsvdir, name, "down")) {
+		if err := os.Remove(filepath.Join(r.runsvdir, name, "down")); err != nil {
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (r *runit) Disable(name string) error {
+	if !util.FileExists(filepath.Join(r.runsvdir, name, "down")) {
+		if _, err := os.Create(filepath.Join(r.runsvdir, name, "down")); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (r *runit) Start(name string) error {
+	if err := r.serviceControl(name, controlUp); err != nil {
+		return err
 	}
 	return nil
 }
 
-func (r *runit) Restart(services []string) error {
-	r.Stop(services)
-	r.Start(services)
-	return nil
-}
-
-func (r *runit) Reload(services []string) error {
-	for _, sv := range services {
-		if err := r.serviceControl(sv, controlHangup); err != nil {
-			return err
-		}
+func (r *runit) Stop(name string) error {
+	if err := r.serviceControl(name, controlDown); err != nil {
+		return err
 	}
 	return nil
 }
 
-func (r *runit) Once(services []string) error {
-	for _, sv := range services {
-		if err := r.serviceControl(sv, controlOnce); err != nil {
-			return err
-		}
+func (r *runit) Restart(name string) error {
+	r.Stop(name)
+	r.Start(name)
+	return nil
+}
+
+func (r *runit) Reload(name string) error {
+	if err := r.serviceControl(name, controlHangup); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (r *runit) Once(name string) error {
+	if err := r.serviceControl(name, controlOnce); err != nil {
+		return err
 	}
 	return nil
 }

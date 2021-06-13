@@ -27,7 +27,7 @@ func (r *runit) serviceScan(name string) (inits.Service, error) {
 	}
 
 	var pid int
-	var command string
+	var command []string
 
 	if status == "up" {
 		pidf, err := util.ReadFileContent(r.runsvdir + "/" + name + "/supervise/pid")
@@ -45,7 +45,9 @@ func (r *runit) serviceScan(name string) (inits.Service, error) {
 			return inits.Service{}, err
 		}
 
-		command = string(bytes.Split(cmdline, []byte{0})[0])
+		for _, a := range bytes.Split(cmdline, []byte{0}) {
+			command = append(command, string(a))
+		}
 	}
 
 	uptime, err := os.Stat(r.runsvdir + "/" + name + "/supervise/pid")
@@ -86,15 +88,6 @@ func (r *runit) serviceExists(name string) error {
 		return inits.ErrServiceNotFound(name)
 	}
 
-	return nil
-}
-
-func (r *runit) servicesExist(services []string) error {
-	for _, sv := range services {
-		if err := r.serviceExists(sv); err != nil {
-			return err
-		}
-	}
 	return nil
 }
 

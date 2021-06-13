@@ -1,6 +1,8 @@
 package runit
 
 import (
+	"bytes"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -8,7 +10,6 @@ import (
 
 	"gitcat.ca/endigma/jasmine/inits"
 	"gitcat.ca/endigma/jasmine/util"
-	"github.com/shirou/gopsutil/v3/process"
 )
 
 func (r *runit) serviceScan(name string) (inits.Service, error) {
@@ -39,16 +40,12 @@ func (r *runit) serviceScan(name string) (inits.Service, error) {
 			return inits.Service{}, err
 		}
 
-		ps, err := process.NewProcess(int32(pid))
+		cmdline, err := ioutil.ReadFile(filepath.Join("/proc", pidf, "/cmdline"))
 		if err != nil {
 			return inits.Service{}, err
 		}
 
-		commandslice, err := ps.CmdlineSlice()
-		if err != nil {
-			return inits.Service{}, err
-		}
-		command = commandslice[0]
+		command = string(bytes.Split(cmdline, []byte{0})[0])
 	}
 
 	uptime, err := os.Stat(r.runsvdir + "/" + name + "/supervise/pid")

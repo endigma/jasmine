@@ -15,6 +15,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var scriptable bool
+
 var (
 	cmd_query_list = &cobra.Command{
 		Use:     "list [filter services...]",
@@ -111,42 +113,72 @@ var (
 		},
 	}
 	cmd_query_status = &cobra.Command{
-		Use:     "status <service>",
+		Use:     "status <services...>",
 		Short:   "Show detailed information about a service",
 		Aliases: []string{"stat"},
 		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 
-			sv, err := initSystem.Status(args[0])
-			if err != nil {
-				log.Fatal().Msg(err.Error())
-			}
+			for _, name := range args {
+				sv, err := initSystem.Status(name)
+				if err != nil {
+					log.Fatal().Msg(err.Error())
+				}
 
-			fmt.Printf("name: %s\n  uptime: %s\n  status: %s\n  command: %s\n",
-				sv.Name,
-				func(sv inits.Service) string {
-					switch true {
-					case sv.Uptime < 5*time.Minute:
-						return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
-					case sv.Uptime < 30*time.Minute:
-						return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
-					}
-					return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
-				}(sv),
-				func(sv inits.Service) string {
-					switch sv.State {
-					case "up":
-						return color.New(color.FgGreen).Sprint(sv.State)
-					case "down":
-						return color.New(color.FgRed).Sprint(sv.State)
-					}
-					return ""
-				}(sv),
-				func(sv inits.Service) string {
-					return strings.Join(sv.Command, " ")
-				}(sv),
-			)
+				if scriptable {
+					fmt.Printf("%s,%s,%s,%v,%d,%s\n",
+						sv.Name,
+						sv.State,
+						sv.Uptime.String(),
+						sv.Enabled,
+						sv.PID,
+						strings.Join(sv.Command, " "),
+					)
+				} else {
+					fmt.Printf("%s:\n  uptime: %s\n  status: %s\n  enabled: %s\n  pid: %s\n  command: %s\n",
+						sv.Name,
+						func(sv inits.Service) string {
+							switch true {
+							case sv.Uptime < 5*time.Minute:
+								return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+							case sv.Uptime < 30*time.Minute:
+								return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+							}
+							return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+						}(sv),
+						func(sv inits.Service) string {
+							switch sv.State {
+							case "up":
+								return color.New(color.FgGreen).Sprint(sv.State)
+							case "down":
+								return color.New(color.FgRed).Sprint(sv.State)
+							}
+							return ""
+						}(sv),
+						func(sv inits.Service) string {
+							switch sv.Enabled {
+							case true:
+								return color.New(color.FgGreen).Sprint(sv.Enabled)
+							case false:
+								return color.New(color.FgRed).Sprint(sv.Enabled)
+							}
+							return ""
+						}(sv),
+						func(sv inits.Service) string {
+							switch sv.State {
+							case "up":
+								return color.New(color.FgHiMagenta).Sprint(sv.PID)
+							case "down":
+								return color.New(color.FgHiBlack).Sprint("---")
+							}
+							return ""
+						}(sv),
+						strings.Join(sv.Command, " "),
+					)
+				}
+
+			}
 		},
 	}
 )
@@ -157,4 +189,6 @@ func init() {
 		cmd_query_list_available,
 		cmd_query_status,
 	)
+
+	cmd_query_status.Flags().BoolVar(&scriptable, "scriptable", false, "format output as csv")
 }

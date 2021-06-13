@@ -36,8 +36,8 @@ var (
 		},
 	}
 	cmd_operation_enable = &cobra.Command{
-		Use:   "up <services...>",
-		Short: "Up named services",
+		Use:   "enable <services...>",
+		Short: "Enable named services",
 		Args:  cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()

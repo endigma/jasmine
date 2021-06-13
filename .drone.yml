@@ -1,0 +1,41 @@
+---
+kind: "pipeline"
+type: "docker"
+name: "build"
+
+platform: 
+  os: "linux"
+  arch: "amd64"
+
+steps:
+  - name: "build amd64"
+    image: "golang:alpine"
+    environment:
+      GOOS: "linux"
+      GOARCH: "amd64"
+      CGO_ENABLED: 0
+    commands:
+      - "go build -o out/jasmine_amd64"
+
+  - name: "build 386"
+    image: "golang:alpine"
+    environment:
+      GOOS: "linux"
+      GOARCH: "386"
+    commands:
+      - "go build -o out/jasmine_386"
+
+  - name: build arm64
+    image: golang:alpine
+    environment:
+      GOOS: "linux"
+      GOARCH: "arm64"
+    commands:
+      - "go build -o out/jasmine_arm64"
+
+  - name: "upx"
+    image: "gruebel/upx"
+    commands:
+      - "upx out/jasmine_amd64"
+      - "upx out/jasmine_arm64"
+      - "upx out/jasmine_386"

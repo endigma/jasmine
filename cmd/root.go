@@ -125,38 +125,11 @@ func Execute() {
 			fmt.Print(cmd.InheritedFlags().FlagUsages())
 		}
 
-		// 		fmt.Printf(
-		// 			"%[1]s:\n
-		//   Jasmine is a frontend for init systems like runit, openrc, s6 and systemd.
-
-		// Usage:
-		//   %[1]s [command]
-
-		// Available Commands:
-		//   disable       Disable named services
-		//   down          Down named services
-		//   enable        Enable named services
-		//   help          Help about any command
-		//   list          List all running services
-		//   listavailable List all available services
-		//   once          Once named services
-		//   pass          Pass commands onto your init system's default tool
-		//   reload        Reload named services
-		//   restart       Restart named services
-		//   start         Start named services
-		//   stop          Stop named services
-		//   up            Up named services
-		//   version       print version and debug information
-
-		//   Flags:
-		//   	--debug      Show debug information
-		//   -h, --help       help for jasmine
-		//   -s, --suppress   Suppress warnings when UID is not 0
-
-		//   Use "%[1]s [command] --help" for more information about a command.",
-		// 			os.Args[0],
-		// 		)
 	})
+
+	for _, cmd := range cmd_root.Commands() {
+		cmd.Flags().BoolP("help", "h", false, fmt.Sprintf("Help for %s", cmd.Name()))
+	}
 
 	cobra.CheckErr(cmd_root.Execute())
 }

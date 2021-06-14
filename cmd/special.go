@@ -2,32 +2,61 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
 var (
-	cmd_version = &cobra.Command{
-		Use:     "version",
-		Short:   "Print version and debug information",
-		Aliases: []string{"about", "v"},
+	cmd_completion = &cobra.Command{
+		Use:   "completion <zsh | fish | bash>",
+		Short: "Generate shell completions",
+		Long: fmt.Sprintf(`To load completions:
+
+  Bash:
+  
+    $ source <(%[1]s completion bash)
+  
+    # To load completions for each session, execute once:
+    # Linux:
+    $ %[1]s completion bash > /etc/bash_completion.d/%[1]s
+    # macOS:
+    $ %[1]s completion bash > /usr/local/etc/bash_completion.d/%[1]s
+  
+  Zsh:
+  
+    # If shell completion is not already enabled in your environment,
+    # you will need to enable it.  You can execute the following once:
+  
+    $ echo "autoload -U compinit; compinit" >> ~/.zshrc
+  
+    # To load completions for each session, execute once:
+    $ %[1]s completion zsh > "${fpath[1]}/_%[1]s"
+  
+    # You will need to start a new shell for this setup to take effect.
+  
+  fish:
+  
+    $ %[1]s completion fish | source
+  
+    # To load completions for each session, execute once:
+    $ %[1]s completion fish > ~/.config/fish/completions/%[1]s.fish
+`, os.Args[0]),
+		Args:      cobra.MinimumNArgs(1),
+		ValidArgs: []string{"bash", "zsh", "fish"},
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Print(
-				color.New(color.FgHiBlack).Sprint("["),
-				color.New(color.FgMagenta).Sprint("Jasmine v0.1.2"),
-				color.New(color.FgHiBlack).Sprint("]"),
-				"\n",
-				color.New(color.FgHiBlack).Sprint("author: "),
-				"endigma <endigma@mailcat.ca>\n",
-				color.New(color.FgHiBlack).Sprint("licence: "),
-				"AGPLv3\n",
-				color.New(color.FgHiBlack).Sprint("source: "),
-				"https://gitcat.ca/endigma/jasmine\n")
+			switch args[0] {
+			case "bash":
+				cmd.Root().GenBashCompletion(os.Stdout)
+			case "zsh":
+				cmd.Root().GenZshCompletion(os.Stdout)
+			case "fish":
+				cmd.Root().GenFishCompletion(os.Stdout, true)
+			}
 		},
 	}
 )
 
 func init() {
-	cmd_root.AddCommand(cmd_version)
+	cmd_root.AddCommand(cmd_completion)
 }

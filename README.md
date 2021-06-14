@@ -28,3 +28,7 @@ Jasmine is not a shell command wrapper, and is 100% go. It aims to replace `rsv`
 | Name                                   | Type/Possible Values | Description                         |
 | -------------------------------------- | -------------------- | ----------------------------------- |
 | `JASMINE_SUPPRESS_PERMISSIONS_WARNING` | Bool                 | Suppress warnings when UID is not 0 |
+
+# Contributing
+
+Feel free to open a PR or issue with functionality you'd like to see! Please keep code quality high if you'd like to see your functionality merged.

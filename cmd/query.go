@@ -112,7 +112,7 @@ var (
 		},
 	}
 	cmd_query_status = &cobra.Command{
-		Use:     "status <services...>",
+		Use:     "status [services...]",
 		Short:   "Show detailed information about a service",
 		Aliases: []string{"s"},
 		Args:    cobra.MinimumNArgs(1),

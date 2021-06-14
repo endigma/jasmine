@@ -8,7 +8,7 @@ import (
 
 var (
 	cmd_operation_add = &cobra.Command{
-		Use:     "add <services...>",
+		Use:     "add [services...]",
 		Short:   "Add named services",
 		Aliases: []string{"a"},
 		Args:    cobra.MinimumNArgs(0),
@@ -22,10 +22,10 @@ var (
 		},
 	}
 	cmd_operation_remove = &cobra.Command{
-		Use:     "remove <services...>",
+		Use:     "remove [services...]",
 		Short:   "Remove named services",
 		Aliases: []string{"r"},
-		Args:    cobra.MinimumNArgs(0),
+		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -36,10 +36,10 @@ var (
 		},
 	}
 	cmd_operation_enable = &cobra.Command{
-		Use:     "enable <services...>",
+		Use:     "enable [services...]",
 		Short:   "Enable named services",
 		Aliases: []string{"e"},
-		Args:    cobra.MinimumNArgs(0),
+		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -50,10 +50,10 @@ var (
 		},
 	}
 	cmd_operation_disable = &cobra.Command{
-		Use:     "disable <services...>",
+		Use:     "disable [services...]",
 		Short:   "Disable named services",
 		Aliases: []string{"d"},
-		Args:    cobra.MinimumNArgs(0),
+		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -64,9 +64,9 @@ var (
 		},
 	}
 	cmd_operation_start = &cobra.Command{
-		Use:   "start <services...>",
+		Use:   "start [services...]",
 		Short: "Start named services",
-		Args:  cobra.MinimumNArgs(0),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -77,9 +77,9 @@ var (
 		},
 	}
 	cmd_operation_stop = &cobra.Command{
-		Use:   "stop <services...>",
+		Use:   "stop [services...]",
 		Short: "Stop named services",
-		Args:  cobra.MinimumNArgs(0),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -90,9 +90,9 @@ var (
 		},
 	}
 	cmd_operation_restart = &cobra.Command{
-		Use:   "restart <services...>",
+		Use:   "restart [services...]",
 		Short: "Restart named services",
-		Args:  cobra.MinimumNArgs(0),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -103,9 +103,9 @@ var (
 		},
 	}
 	cmd_operation_once = &cobra.Command{
-		Use:   "once <services...>",
+		Use:   "once [services...]",
 		Short: "Once named services",
-		Args:  cobra.MinimumNArgs(0),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -116,9 +116,9 @@ var (
 		},
 	}
 	cmd_operation_reload = &cobra.Command{
-		Use:   "reload <services...>",
+		Use:   "reload [services...]",
 		Short: "Reload named services",
-		Args:  cobra.MinimumNArgs(0),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
 			for _, name := range args {
@@ -129,7 +129,7 @@ var (
 		},
 	}
 	cmd_operation_pass = &cobra.Command{
-		Use:   "pass <args...>",
+		Use:   "pass [args...]",
 		Short: "Pass commands onto your init system's default tool",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {

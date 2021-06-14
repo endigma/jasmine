@@ -4,9 +4,12 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"gitcat.ca/endigma/jasmine/inits"
 	"gitcat.ca/endigma/jasmine/inits/runit"
+	"github.com/fatih/color"
+	"github.com/juju/ansiterm"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
@@ -21,8 +24,8 @@ var initSystems = map[string]func() inits.Init{
 
 // cmd_root represents the base command when called without any subcommands
 var cmd_root = &cobra.Command{
-	Use:   os.Args[0],
-	Short: "a better user interface for init systems and service supervisors",
+	Use:   fmt.Sprintf("%s <command> [args...] [flags]", os.Args[0]),
+	Short: "is a better user interface for init systems and service supervisors",
 	Long:  fmt.Sprintf("%[1]s:\n  %[1]s Jasmine is a frontend for init systems like runit, openrc, s6 and systemd.\n", os.Args[0]),
 }
 
@@ -69,6 +72,91 @@ func Execute() {
 	} else {
 		log.Fatal().Msg("Unsupported Init System!")
 	}
+
+	cmd_root.SetHelpFunc(func(cmd *cobra.Command, args []string) {
+		if cmd == cmd_root {
+			fmt.Printf(
+				"%[1]s:\n  Jasmine is a frontend for init systems like runit, openrc, s6 and systemd.\n\n",
+				color.New(color.FgHiMagenta).Sprint("Jasmine"))
+
+			fmt.Printf(
+				"%s:\n  %s\n\n",
+				color.New(color.FgBlue).Sprint("Usage"), cmd.Use)
+
+			fmt.Printf(
+				"%s:\n",
+				color.New(color.FgGreen).Sprint("Available Commands"))
+
+			w := ansiterm.NewTabWriter(os.Stdout, 1, 1, 4, ' ', 0)
+			for _, cmd := range cmd.Commands() {
+				fmt.Fprintf(w, "  %s\t%s\t%s\n", strings.Split(cmd.Use, " ")[0], color.New(color.FgRed, color.Bold).Sprint(strings.Join(cmd.Aliases, ", ")), cmd.Short)
+			}
+
+			fmt.Fprint(w, "\n")
+
+			w.Flush()
+
+			fmt.Printf(
+				"%s:\n",
+				color.New(color.FgHiYellow).Sprint("Global Flags"))
+
+			fmt.Print(cmd.LocalFlags().FlagUsages())
+
+			fmt.Printf("\nUse \"%s <command> %s\" for more information about a command.\n", os.Args[0], color.New(color.FgHiYellow).Sprint("--help"))
+		} else {
+			fmt.Printf(
+				"%s:\n  %s %s\n\n",
+				color.New(color.FgBlue).Sprint("Usage"), os.Args[0], strings.Split(cmd.Use, " ")[0])
+
+			fmt.Printf(
+				"%s:\n  %s\n",
+				color.New(color.FgRed).Sprint("Aliases"), strings.Join(cmd.Aliases, ", "))
+
+			fmt.Printf(
+				"\n%s:\n",
+				color.New(color.FgYellow).Sprint("Flags"))
+
+			fmt.Print(cmd.LocalFlags().FlagUsages())
+
+			fmt.Printf(
+				"\n%s:\n",
+				color.New(color.FgHiYellow).Sprint("Global Flags"))
+
+			fmt.Print(cmd.InheritedFlags().FlagUsages())
+		}
+
+		// 		fmt.Printf(
+		// 			"%[1]s:\n
+		//   Jasmine is a frontend for init systems like runit, openrc, s6 and systemd.
+
+		// Usage:
+		//   %[1]s [command]
+
+		// Available Commands:
+		//   disable       Disable named services
+		//   down          Down named services
+		//   enable        Enable named services
+		//   help          Help about any command
+		//   list          List all running services
+		//   listavailable List all available services
+		//   once          Once named services
+		//   pass          Pass commands onto your init system's default tool
+		//   reload        Reload named services
+		//   restart       Restart named services
+		//   start         Start named services
+		//   stop          Stop named services
+		//   up            Up named services
+		//   version       print version and debug information
+
+		//   Flags:
+		//   	--debug      Show debug information
+		//   -h, --help       help for jasmine
+		//   -s, --suppress   Suppress warnings when UID is not 0
+
+		//   Use "%[1]s [command] --help" for more information about a command.",
+		// 			os.Args[0],
+		// 		)
+	})
 
 	cobra.CheckErr(cmd_root.Execute())
 }

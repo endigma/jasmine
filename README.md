@@ -8,6 +8,10 @@ Jasmine is not a shell command wrapper, and is 100% go. It aims to replace `rsv`
 
 # Installation
 
+## Using go
+
+`go install gitcat.ca/endigma/jasmine@latest`
+
 # Configuration
 
 ## Environment variables

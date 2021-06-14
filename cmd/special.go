@@ -10,8 +10,8 @@ import (
 var (
 	cmd_version = &cobra.Command{
 		Use:     "version",
-		Short:   "print version and debug information",
-		Aliases: []string{"about", "version", "v"},
+		Short:   "Print version and debug information",
+		Aliases: []string{"about", "v"},
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Print(
 				color.New(color.FgHiBlack).Sprint("["),

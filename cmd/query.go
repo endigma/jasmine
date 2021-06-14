@@ -21,7 +21,7 @@ var (
 	cmd_query_list = &cobra.Command{
 		Use:     "list [filter services...]",
 		Short:   "List all running services",
-		Aliases: []string{"ls", "ll", "show"},
+		Aliases: []string{"ls", "ll"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()
@@ -89,12 +89,11 @@ var (
 		},
 	}
 	cmd_query_list_available = &cobra.Command{
-		Use:     "listavailable [filter services...]",
+		Use:     "listavail [filter services...]",
 		Short:   "List all available services",
 		Aliases: []string{"la"},
 		Args:    cobra.MinimumNArgs(0),
 		Run: func(cmd *cobra.Command, args []string) {
-			util.SudoWarn()
 			var list map[string]bool
 
 			list, err := initSystem.ListAvailable()
@@ -115,7 +114,7 @@ var (
 	cmd_query_status = &cobra.Command{
 		Use:     "status <services...>",
 		Short:   "Show detailed information about a service",
-		Aliases: []string{"stat"},
+		Aliases: []string{"s"},
 		Args:    cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			util.SudoWarn()

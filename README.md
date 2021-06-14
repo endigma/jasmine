@@ -1,6 +1,6 @@
 # Jasmine
 
-_Jasmine is just another service manager_
+_Jasmine is ***j***ust ***a***nother ***s***ervice ***m***anager_
 
 Jasmine is not an init system, nor is it a service supervisor. Jasmine is a frontend and control plane for init systems (think `runit`, `openrc` , `s6`, even `systemd`)
 

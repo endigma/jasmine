@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -32,19 +33,20 @@ var cmd_root = &cobra.Command{
 
 func help(cmd *cobra.Command, args []string) {
 	if cmd == cmd_root {
-		fmt.Printf(
+		var buf *bufio.Writer = bufio.NewWriter(os.Stdout)
+		fmt.Fprintf(buf,
 			"%[1]s:\n  Jasmine is a frontend for init systems like runit, openrc, s6 and systemd.\n\n",
 			color.New(color.FgHiMagenta).Sprint("Jasmine"))
 
-		fmt.Printf(
+		fmt.Fprintf(buf,
 			"%s:\n  %s\n\n",
 			color.New(color.FgBlue).Sprint("Usage"), cmd.Use)
 
-		fmt.Printf(
+		fmt.Fprintf(buf,
 			"%s:\n",
 			color.New(color.FgGreen).Sprint("Available Commands"))
 
-		w := ansiterm.NewTabWriter(os.Stdout, 1, 1, 4, ' ', 0)
+		w := ansiterm.NewTabWriter(buf, 1, 1, 4, ' ', 0)
 		for _, cmd := range cmd.Commands() {
 			fmt.Fprintf(w, "  %s\t%s\t%s\n", strings.Split(cmd.Use, " ")[0], color.New(color.FgRed, color.Bold).Sprint(strings.Join(cmd.Aliases, ", ")), cmd.Short)
 		}
@@ -53,15 +55,18 @@ func help(cmd *cobra.Command, args []string) {
 
 		w.Flush()
 
-		fmt.Printf(
+		fmt.Fprintf(buf,
 			"%s:\n",
 			color.New(color.FgHiYellow).Sprint("Global Flags"))
 
-		fmt.Print(cmd.LocalFlags().FlagUsages())
+		fmt.Fprint(buf, cmd.LocalFlags().FlagUsages())
 
-		fmt.Printf("\nUse \"%s [command] %s\" for more information about a command.\n", os.Args[0], color.New(color.FgHiYellow).Sprint("--help"))
+		fmt.Fprintf(buf, "\nUse \"%s [command] %s\" for more information about a command.\n", os.Args[0], color.New(color.FgHiYellow).Sprint("--help"))
+
+		buf.Flush()
 	} else {
-		fmt.Printf(
+		var buf *bufio.Writer = bufio.NewWriter(os.Stdout)
+		fmt.Fprintf(buf,
 			"%s:\n  %s\n\n",
 			color.New(color.Bold).Sprint(cmd.Name()), cmd.Short)
 
@@ -71,31 +76,33 @@ func help(cmd *cobra.Command, args []string) {
 				color.New(color.FgHiBlue).Sprint("Desc"), cmd.Long)
 		}
 
-		fmt.Printf(
+		fmt.Fprintf(buf,
 			"%s:\n  %s\n\n",
 			color.New(color.FgBlue).Sprint("Usage"), cmd.Use)
 
 		if len(cmd.Aliases) != 0 {
-			fmt.Printf(
+			fmt.Fprintf(buf,
 				"%s:\n  %s\n\n",
 				color.New(color.FgRed).Sprint("Aliases"), strings.Join(cmd.Aliases, ", "))
 		}
 
 		if cmd.LocalFlags().HasFlags() {
-			fmt.Printf(
+			fmt.Fprintf(buf,
 				"%s:\n",
 				color.New(color.FgYellow).Sprint("Flags"))
 
-			fmt.Print(cmd.LocalFlags().FlagUsages(), "\n")
+			fmt.Fprint(buf, cmd.LocalFlags().FlagUsages(), "\n")
 		}
 
 		if cmd.LocalFlags().HasFlags() {
-			fmt.Printf(
+			fmt.Fprintf(buf,
 				"%s:\n",
 				color.New(color.FgHiYellow).Sprint("Global Flags"))
 
-			fmt.Print(cmd.InheritedFlags().FlagUsages(), "\n")
+			fmt.Fprint(buf, cmd.InheritedFlags().FlagUsages(), "\n")
 		}
+
+		buf.Flush()
 	}
 
 }

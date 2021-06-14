@@ -57,21 +57,21 @@ type Service struct {
 
 var (
 	ErrServiceNotFound = func(sv string) error {
-		return fmt.Errorf("service %s not found", sv)
+		return fmt.Errorf("Service '%s' not found", sv)
 	}
 	ErrServiceMalformed = func(sv string) error {
-		return fmt.Errorf("service %s is malformed", sv)
+		return fmt.Errorf("Service '%s' is malformed", sv)
 	}
 	ErrServiceAlreadyEnabled = func(sv string) error {
-		return fmt.Errorf("service %s is already enabled", sv)
+		return fmt.Errorf("Service '%s' is already enabled", sv)
 	}
 	ErrServiceAlreadyDisabled = func(sv string) error {
-		return fmt.Errorf("service %s is already disabled", sv)
+		return fmt.Errorf("Service '%s' is already disabled", sv)
 	}
 	ErrServiceAlreadyUp = func(sv string) error {
-		return fmt.Errorf("service %s is already up", sv)
+		return fmt.Errorf("Service '%s' is already up", sv)
 	}
 	ErrServiceAlreadyDown = func(sv string) error {
-		return fmt.Errorf("service %s is already down", sv)
+		return fmt.Errorf("Service '%s' is already down", sv)
 	}
 )

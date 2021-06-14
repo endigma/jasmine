@@ -122,7 +122,8 @@ var (
 			for _, name := range args {
 				sv, err := initSystem.Status(name)
 				if err != nil {
-					log.Fatal().Msg(err.Error())
+					color.New(color.FgRed).Printf("Error! %s\n", err.Error())
+					continue
 				}
 
 				if scriptable {

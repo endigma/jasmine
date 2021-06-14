@@ -13,6 +13,10 @@ import (
 )
 
 func (r *runit) serviceScan(name string) (inits.Service, error) {
+	if err := r.serviceExists(name); err != nil {
+		return inits.Service{}, err
+	}
+
 	statusf, err := util.ReadFileContent(r.runsvdir + "/" + name + "/supervise/stat")
 	if err != nil {
 		return inits.Service{}, err

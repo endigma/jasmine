@@ -6,6 +6,11 @@ Jasmine is not an init system, nor is it a service supervisor. Jasmine is a fron
 
 Jasmine is not a shell command wrapper, and is 100% go. It aims to replace `rsv` and `vsv` as well as `sv` for most things. It is modular (and expandable) by design, but only currently has support for runit planned.
 
+# Planned Functionality
+- Backends for openrc, s6 and systemd
+- Backend for docker
+- Automatically determine runit paths
+
 # Screenshot
 
 ![](https://cloudcat.ca/img/caiiy2ti.png)

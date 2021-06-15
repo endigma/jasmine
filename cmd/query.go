@@ -74,13 +74,19 @@ var (
 						return ""
 					}(sv),
 					func(sv inits.Service) string {
-						switch true {
-						case sv.Uptime < 5*time.Minute:
-							return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
-						case sv.Uptime < 30*time.Minute:
-							return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
+						switch sv.State {
+						case "up":
+							switch true {
+							case sv.Uptime < 5*time.Minute:
+								return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
+							case sv.Uptime < 30*time.Minute:
+								return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
+							}
+							return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
+						case "down":
+							return color.New(color.FgHiBlack).Sprint("---")
 						}
-						return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(1))
+						return ""
 					}(sv),
 				)
 			}
@@ -139,13 +145,19 @@ var (
 					fmt.Printf("%s:\n  uptime: %s\n  status: %s\n  enabled: %s\n  pid: %s\n  command: %s\n",
 						sv.Name,
 						func(sv inits.Service) string {
-							switch true {
-							case sv.Uptime < 5*time.Minute:
-								return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
-							case sv.Uptime < 30*time.Minute:
-								return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+							switch sv.State {
+							case "up":
+								switch true {
+								case sv.Uptime < 5*time.Minute:
+									return color.New(color.FgRed).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+								case sv.Uptime < 30*time.Minute:
+									return color.New(color.FgYellow).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+								}
+								return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+							case "down":
+								return color.New(color.FgHiBlack).Sprint("---")
 							}
-							return color.New(color.FgHiBlack).Sprint(durafmt.Parse(sv.Uptime).LimitFirstN(4))
+							return ""
 						}(sv),
 						func(sv inits.Service) string {
 							switch sv.State {
